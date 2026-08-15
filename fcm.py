@@ -25,7 +25,7 @@ import urllib.error
 import urllib.request
 
 VERSION = "0.1.0"
-DEFAULT_MODEL = "qwen2.5:7b"
+DEFAULT_MODEL = "qwen2.5:3b"
 DEFAULT_URL = "http://localhost:11434"
 MAX_DIFF_CHARS = 6000
 
@@ -80,7 +80,8 @@ def build_prompt(stat: str, body: str, lang: str, n: int) -> str:
 - type 只能从以下选择:{TYPES}
 - scope 可省略,尽量具体(如模块/组件名)
 - 语言:写 {LANG_NAMES[lang]} 的 message
-- 只输出 {n} 条候选,每条一行,可以带序号,但不要任何解释或多余文字
+- 只输出 {n} 条候选,每条严格一行、严格符合 type(scope): subject 格式
+- 禁止任何解释、翻译说明或箭头符号(→),直接输出 commit message 本身
 
 {FEW_SHOT}
 
@@ -114,7 +115,7 @@ def ollama_chat(model: str, prompt: str, url: str) -> str:
         sys.exit(
             "✗ 无法连接 Ollama(默认 http://localhost:11434)。\n"
             "  安装:curl -fsSL https://ollama.com/install.sh | sh\n"
-            "  拉取模型:ollama pull qwen2.5:7b\n"
+            "  拉取模型:ollama pull qwen2.5:3b\n"
             "  启动服务:ollama serve"
         )
     if data.get("error"):
@@ -126,6 +127,8 @@ def _clean_line(line: str) -> str:
     line = line.strip()
     if not line:
         return ""
+    if "→" in line:
+        line = line.split("→", 1)[1].strip()  # 模型偶发"解释 → 真实 message",只保留箭头后内容
     line = re.sub(r"^\d+[.)、\s]*", "", line)  # 去掉 "1." "1)" 等序号
     line = re.sub(r"^[-*•]\s*", "", line)  # 去掉列表符号
     return line.strip()
@@ -198,7 +201,7 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(
         prog="fcm",
         description="本地 AI 生成规范 commit message(代码不出本机)",
-        epilog="示例:fcm --lang zh   # 用 qwen2.5:7b 为暂存区改动生成中文提交信息",
+        epilog="示例:fcm --lang zh   # 用 qwen2.5:3b 为暂存区改动生成中文提交信息",
     )
     p.add_argument("--lang", choices=sorted(LANG_NAMES), default="zh",
                    help="commit message 语言(默认 zh)")

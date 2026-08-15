@@ -43,8 +43,8 @@ pip install git+https://github.com/vvvici/fast-commit-message.git
 ```bash
 # 安装 Ollama
 curl -fsSL https://ollama.com/install.sh | sh
-# 拉取推荐模型(中文场景最佳性价比)
-ollama pull qwen2.5:7b
+# 拉取推荐模型(默认 3b:快;想要更高质量用 7b)
+ollama pull qwen2.5:3b
 ```
 
 ## 💡 快速开始
@@ -56,7 +56,7 @@ fcm --lang en          # 英文提交信息
 fcm --unstaged         # 使用未暂存改动
 fcm --yes              # 自动选第一条并直接提交(适合 hook)
 fcm --no-commit        # 只生成不提交(先看看效果)
-fcm --model qwen2.5:3b # 换更小的模型(更快但质量略低)
+fcm --model qwen2.5:7b # 换更大的模型(质量更高但更慢)
 ```
 
 效果:
@@ -84,7 +84,7 @@ $ fcm
 | 参数 | 说明 | 默认 |
 |---|---|---|
 | `--lang` | `zh` / `en` | `zh` |
-| `--model` | Ollama 模型名 | `qwen2.5:7b` |
+| `--model` | Ollama 模型名 | `qwen2.5:3b` |
 | `--url` | Ollama 服务地址 | `http://localhost:11434` |
 | `--unstaged` | 使用未暂存改动而非 `--staged` | 关 |
 | `--yes` / `-y` | 自动选第一条并直接提交 | 关 |
