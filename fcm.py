@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import argparse
+import difflib
 import json
 import os
 import re
@@ -27,7 +28,7 @@ import tempfile
 import urllib.error
 import urllib.request
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 DEFAULT_MODEL = "qwen2.5:3b"
 DEFAULT_URL = "http://localhost:11434"
 MAX_DIFF_CHARS = 6000
@@ -137,6 +138,22 @@ def _clean_line(line: str) -> str:
     return line.strip()
 
 
+def normalize_message(msg: str) -> str:
+    """校验并修正 type:模糊匹配合法 type(doc → docs 等),不合法则原样保留。"""
+    types = TYPES.split()
+    m = re.match(r"^([a-zA-Z]+)(?:\(([^)]+)\))?:\s*(.*)$", msg)
+    if not m:
+        return msg  # 不是 conventional 格式,不强行改造
+    typ, scope, subject = m.group(1), m.group(2), m.group(3)
+    if typ in types:
+        return msg
+    best = difflib.get_close_matches(typ, types, n=1, cutoff=0.6)
+    if not best:
+        return msg
+    fixed = f"{best[0]}: {subject}" if scope is None else f"{best[0]}({scope}): {subject}"
+    return fixed
+
+
 def generate_candidates(model: str, prompt: str, url: str, n: int) -> list[str]:
     raw = ollama_chat(model, prompt, url)
     msgs = [m for m in (_clean_line(l) for l in raw.splitlines()) if m]
@@ -147,7 +164,7 @@ def generate_candidates(model: str, prompt: str, url: str, n: int) -> list[str]:
     msgs = list(dict.fromkeys(msgs))  # 去重,保持顺序
     if not msgs:
         sys.exit("✗ 模型没有返回有效 message,请重试。")
-    return msgs[:n]
+    return [normalize_message(m) for m in msgs[:n]]
 
 
 def edit_message(initial: str) -> str:

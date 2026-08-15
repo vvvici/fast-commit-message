@@ -7,9 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/vvvici/fast-commit-message?style=social)](https://github.com/vvvici/fast-commit-message)
 
-<!-- TODO: 录制 30 秒 demo GIF 后取消注释
 ![demo](docs/demo.gif)
--->
 
 ---
 
@@ -18,7 +16,7 @@
 - 🏠 **纯本地**:走 Ollama,代码 diff 不会上传到任何云端,无需 API key、无需科学上网
 - 🇨🇳 **中文优先**:原生生成规范的中文 commit message(很多公司要求中文提交)
 - 📦 **单文件零依赖**:只用一个 `.py` 文件 + Python 标准库,下载即用
-- 🎯 **符合 Conventional Commits**:`feat/fix/docs/refactor/...` 自动匹配改动类型
+- 🎯 **符合 Conventional Commits**:`feat/fix/docs/refactor/...` 自动匹配改动类型,并**自动修正拼写**(`doc` → `docs`)
 - 🖥 **交互式**:3 条候选任选,可手动编辑/自定义,确认后一键提交
 - 🪝 **Git Hook 一键集成**:`fcm install` 后 `git commit` 自动预填 AI 消息,改完即提交
 - ⏱ **可无人值守**:`--yes` 全自动选第一条并提交,适合 CI 脚本
@@ -140,9 +138,9 @@ hook 很克制,以下情况一律不打扰:
 
 - [x] v0.1:基础生成 + 交互选择 + 一键提交
 - [x] v0.2:git hook 一键安装(`prepare-commit-msg` 自动预填)
-- [ ] v0.3:OpenAI 兼容端点(DeepSeek / OpenRouter 等)
-- [ ] v0.4:mojicode 表情 + 多模型对比
-- [ ] v0.5:type 合法性校验(自动修正 `doc` → `docs`)
+- [x] v0.3:type 合法性校验与自动修正(`doc` → `docs`)
+- [ ] v0.4:OpenAI 兼容端点(DeepSeek / OpenRouter 等)
+- [ ] v0.5:mojicode 表情 + 多模型对比
 
 ## ❓ FAQ
 
