@@ -7,7 +7,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/vvvici/fast-commit-message?style=social)](https://github.com/vvvici/fast-commit-message)
 
+<!-- TODO: 录制 30 秒 demo GIF 后取消注释
 ![demo](docs/demo.gif)
+-->
 
 ---
 
