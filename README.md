@@ -20,7 +20,8 @@
 - 📦 **单文件零依赖**:只用一个 `.py` 文件 + Python 标准库,下载即用
 - 🎯 **符合 Conventional Commits**:`feat/fix/docs/refactor/...` 自动匹配改动类型
 - 🖥 **交互式**:3 条候选任选,可手动编辑/自定义,确认后一键提交
-- 🪝 **可无人值守**:`--yes` 全自动选第一条并提交,适合 git hook
+- 🪝 **Git Hook 一键集成**:`fcm install` 后 `git commit` 自动预填 AI 消息,改完即提交
+- ⏱ **可无人值守**:`--yes` 全自动选第一条并提交,适合 CI 脚本
 
 ## 🚀 安装
 
@@ -79,6 +80,38 @@ $ fcm
 [main abc1234] feat(auth): add remember-me option on login page
 ```
 
+## 🪝 Git Hook 集成(提交时自动预填)
+
+装一次,以后每次 `git commit` 自动预填 AI 消息,编辑器打开后**可自由修改**再保存提交:
+
+```bash
+fcm install            # 当前仓库安装
+fcm install --global   # 全局安装(所有仓库生效,经 core.hooksPath)
+fcm uninstall          # 卸载
+fcm uninstall --global # 卸载全局 hook
+```
+
+装完后:
+
+```bash
+git add .
+git commit
+# 编辑器自动打开,已预填:
+#   feat(auth): add remember-me option on login page
+#   # 由 fcm 自动生成,可直接保存或修改后保存
+# 直接保存 → 用 AI 消息提交;修改后再保存 → 用你的消息提交
+```
+
+hook 很克制,以下情况一律不打扰:
+
+| 场景 | 行为 |
+|---|---|
+| `git commit -m "..."` / 模板 / 合并 / cherry-pick / amend | 尊重已有内容,跳过 |
+| 无暂存改动 | 静默退出 |
+| `FCM_DISABLE=1 git commit` | 临时禁用 |
+| `git commit --no-verify` | git 原生跳过 |
+| Ollama 未运行/生成失败 | 静默跳过,绝不阻塞提交 |
+
 ## 🔧 参数一览
 
 | 参数 | 说明 | 默认 |
@@ -106,9 +139,10 @@ $ fcm
 ## 🗺 路线图
 
 - [x] v0.1:基础生成 + 交互选择 + 一键提交
-- [ ] v0.2:git hook 一键安装(`prepare-commit-msg` 自动建议)
+- [x] v0.2:git hook 一键安装(`prepare-commit-msg` 自动预填)
 - [ ] v0.3:OpenAI 兼容端点(DeepSeek / OpenRouter 等)
 - [ ] v0.4:mojicode 表情 + 多模型对比
+- [ ] v0.5:type 合法性校验(自动修正 `doc` → `docs`)
 
 ## ❓ FAQ
 
